@@ -1507,9 +1507,9 @@ parse_dcb20_entry(struct drm_device *dev, struct dcb_table *dcb,
 			link = entry->tmdsconf.sor.link;
 		}
 		else if (dcb->version >= 0x30)
-			entry->tmdsconf.slave_addr = (conf & 0x00000700) >> 8;
+			entry->tmdsconf.client_addr = (conf & 0x00000700) >> 8;
 		else if (dcb->version >= 0x22)
-			entry->tmdsconf.slave_addr = (conf & 0x00000070) >> 4;
+			entry->tmdsconf.client_addr = (conf & 0x00000070) >> 4;
 		break;
 	case DCB_OUTPUT_EOL:
 		/* weird g80 mobile type that "nv" treats as a terminator */

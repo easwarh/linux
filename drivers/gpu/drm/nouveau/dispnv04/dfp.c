@@ -149,7 +149,7 @@ void nv04_dfp_update_fp_control(struct drm_encoder *encoder, int mode)
 	}
 }
 
-static struct drm_encoder *get_tmds_slave(struct drm_encoder *encoder)
+static struct drm_encoder *get_tmds_client(struct drm_encoder *encoder)
 {
 	struct drm_device *dev = encoder->dev;
 	struct dcb_output *dcb = nouveau_encoder(encoder)->dcb;
@@ -172,7 +172,7 @@ static struct drm_encoder *get_tmds_slave(struct drm_encoder *encoder)
 		struct dcb_output *slave_dcb = nouveau_encoder(slave)->dcb;
 
 		if (slave_dcb->type == DCB_OUTPUT_TMDS && get_slave_funcs(slave) &&
-		    slave_dcb->tmdsconf.slave_addr == dcb->tmdsconf.slave_addr)
+		    slave_dcb->tmdsconf.client_addr == dcb->tmdsconf.client_addr)
 			return slave;
 	}
 
@@ -471,7 +471,7 @@ static void nv04_dfp_commit(struct drm_encoder *encoder)
 		NVWriteRAMDAC(dev, 0, NV_PRAMDAC_TEST_CONTROL + nv04_dac_output_offset(encoder), 0x00100000);
 
 	/* Init external transmitters */
-	slave_encoder = get_tmds_slave(encoder);
+	slave_encoder = get_tmds_client(encoder);
 	if (slave_encoder)
 		get_slave_funcs(slave_encoder)->mode_set(
 			slave_encoder, &nv_encoder->mode, &nv_encoder->mode);
@@ -621,7 +621,7 @@ static void nv04_dfp_destroy(struct drm_encoder *encoder)
 	kfree(nv_encoder);
 }
 
-static void nv04_tmds_slave_init(struct drm_encoder *encoder)
+static void nv04_tmds_client_init(struct drm_encoder *encoder)
 {
 	struct drm_device *dev = encoder->dev;
 	struct dcb_output *dcb = nouveau_encoder(encoder)->dcb;
@@ -632,7 +632,7 @@ static void nv04_tmds_slave_init(struct drm_encoder *encoder)
 		{
 		    {
 		        .type = "sil164",
-		        .addr = (dcb->tmdsconf.slave_addr == 0x7 ? 0x3a : 0x38),
+		        .addr = (dcb->tmdsconf.client_addr == 0x7 ? 0x3a : 0x38),
 		        .platform_data = &(struct sil164_encoder_params) {
 		            SIL164_INPUT_EDGE_RISING
 		         }
@@ -642,7 +642,7 @@ static void nv04_tmds_slave_init(struct drm_encoder *encoder)
 	};
 	int type;
 
-	if (!nv_gf4_disp_arch(dev) || !bus || get_tmds_slave(encoder))
+	if (!nv_gf4_disp_arch(dev) || !bus || get_tmds_client(encoder))
 		return;
 
 	type = nvkm_i2c_bus_probe(bus, "TMDS transmitter", info, NULL, NULL);
@@ -716,7 +716,7 @@ nv04_dfp_create(struct drm_connector *connector, struct dcb_output *entry)
 
 	if (entry->type == DCB_OUTPUT_TMDS &&
 	    entry->location != DCB_LOC_ON_CHIP)
-		nv04_tmds_slave_init(encoder);
+		nv04_tmds_client_init(encoder);
 
 	drm_connector_attach_encoder(connector, encoder);
 	return 0;

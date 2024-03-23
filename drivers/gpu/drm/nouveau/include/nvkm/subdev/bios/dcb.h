@@ -50,7 +50,7 @@ struct dcb_output {
 		} dpconf;
 		struct {
 			struct sor_conf sor;
-			int slave_addr;
+			int client_addr;
 		} tmdsconf;
 	};
 	bool i2c_upper_default;

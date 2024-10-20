@@ -168,7 +168,7 @@ static inline bool do_logging(int level)
 #define storvsc_log(dev, level, fmt, ...)			\
 do {								\
 	if (do_logging(level))					\
-		dev_warn(&(dev)->device, fmt, ##__VA_ARGS__);	\
+		dev_warn_ratelimited(&(dev)->device, fmt, ##__VA_ARGS__);	\
 } while (0)
 
 struct vmscsi_request {

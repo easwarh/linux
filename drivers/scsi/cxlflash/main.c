@@ -396,7 +396,7 @@ static int wait_resp(struct afu *afu, struct afu_cmd *cmd)
 	struct cxlflash_cfg *cfg = afu->parent;
 	struct device *dev = &cfg->dev->dev;
 	int rc = 0;
-	ulong timeout = msecs_to_jiffies(cmd->rcb.timeout * 2 * 1000);
+	ulong timeout = secs_to_jiffies(cmd->rcb.timeout * 2);
 
 	timeout = wait_for_completion_timeout(&cmd->cevent, timeout);
 	if (!timeout)

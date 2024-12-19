@@ -316,7 +316,7 @@ static inline void force_devcd_timeout(struct hci_dev *hdev,
 				       unsigned int timeout)
 {
 #ifdef CONFIG_DEV_COREDUMP
-	hdev->dump.timeout = msecs_to_jiffies(timeout * 1000);
+	hdev->dump.timeout = secs_to_jiffies(timeout);
 #endif
 }
 

@@ -276,7 +276,7 @@ static int __init ic_open_devs(void)
 	start = jiffies;
 	next_msg = start + msecs_to_jiffies(20000);
 	while (time_before(jiffies, start +
-			   msecs_to_jiffies(carrier_timeout * 1000))) {
+			   secs_to_jiffies(carrier_timeout))) {
 		int wait, elapsed;
 
 		rtnl_lock();
